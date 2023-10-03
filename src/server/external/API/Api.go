@@ -46,8 +46,6 @@ func (a *API) HandleWss(c *websocket.Conn) {
 
 	sessionId := a.Sql.CreateSession(c.Query("session"))
 
-	log.Println(sessionId)
-
 	for {
 		if mt, msg, err = c.ReadMessage(); err != nil {
 			log.Println("read:", err)
