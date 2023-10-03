@@ -1,0 +1,8 @@
+- Localizada no sudoeste do Oceano Pacífico\n
+- Possui beleza natural deslumbrante e herança cultural rica\n
+- Paisagens variam de montanhas cobertas de neve, florestas exuberantes a praias intocadas e fiordes\n
+- Cultura Maori adiciona um sabor distintivo com arte tradicional, dança e língua\n
+- Famosa por aventuras ao ar livre, incluindo caminhadas, esqui e esportes aquáticos \n
+- Comprometida com a conservação ambiental \n
+- População conhecida como "Kiwis" por serem calorosos e acolhedores \n
+- Terra de paisagens deslumbrantes, diversidade cultural, emoções ao ar livre e forte dedicação à preservação de seus tesouros naturais.
