@@ -1,7 +1,9 @@
 package api
 
 import (
-	"docpreview/external/SQLite"
+	sqlite "docpreview/external/SQLite"
+	shared "docpreview/external/shared"
+	"fmt"
 	"log"
 
 	"github.com/gofiber/contrib/websocket"
@@ -12,6 +14,7 @@ type API struct {
 	Listenaddr string
 	Server     *fiber.App
 	Sql        *sqlite.SqliteStore
+	PrivateLLM *shared.PrivateLLM
 }
 
 func NewAPI(listenaddr string) *API {
@@ -21,7 +24,8 @@ func NewAPI(listenaddr string) *API {
 			StrictRouting: true,
 			AppName:       "North API",
 		}),
-		Sql: sqlite.Init(),
+		Sql:        sqlite.Init(),
+		PrivateLLM: shared.NewPrivateLLM(),
 	}
 	return api
 }
@@ -38,27 +42,43 @@ func (a *API) UpgradeWss(c *fiber.Ctx) error {
 
 func (a *API) HandleWss(c *websocket.Conn) {
 
+	type Request struct {
+		Prompt string `json:"prompt"`
+		Type   string `json:"type"`
+		Gpt    bool   `json:"gpt"`
+	}
+
 	var (
 		mt  int
 		msg []byte
 		err error
+		req Request
 	)
 
 	sessionId := a.Sql.CreateSession(c.Query("session"))
 
 	for {
+
+		err = c.ReadJSON(&req)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if req.Gpt {
+			go a.PrivateLLM.PromptForBulletPoint(req.Prompt, req.Type, c)
+		}
+
 		if mt, msg, err = c.ReadMessage(); err != nil {
 			log.Println("read:", err)
 			break
 		}
-		log.Printf("recv: %s", msg)
 
-		log.Println("write:", err)
+		fmt.Println(msg)
+
 		if err = c.WriteMessage(mt, []byte(sessionId)); err != nil {
 			break
 		}
 	}
-
 }
 
 func (a *API) Listen() {

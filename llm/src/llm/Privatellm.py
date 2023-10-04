@@ -21,8 +21,6 @@ class PrivateLLM:
 
             message_user = self.create_user_message(prompt)
 
-            print(message_user)
-
             chat.append(message_user)
 
             url = 'https://{0}/openai/deployments/{1}/chat/completions?api-version={2}'.format(self.resource,
@@ -35,8 +33,6 @@ class PrivateLLM:
                 "messages": chat
             }
 
-            print(body_data)
-
             response = requests.post(url, headers=headers, json=body_data)
             text = response.text
             parsed_json = json.loads(text)
@@ -44,7 +40,7 @@ class PrivateLLM:
             history = parsed_json['choices'][0]['message']
             chat.append(history)
 
-            return {"history": chat[-1]}
+            return chat[-1]
 
         except Exception as error:
             raise Exception(error)
